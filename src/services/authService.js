@@ -1,10 +1,18 @@
 import axios from 'axios';
-import config from '../config'; // Import configuration
+import config from '../config';
 
 const API_URL = config.apiUrl;
 
-const register = async (name, email, password) => {
-  const response = await axios.post(`${API_URL}/register`, { name, email, password }, { withCredentials: true });
+const register = async (givenName, familyName, email, mobileNumber, password, state, postcode) => {
+  const response = await axios.post(`${API_URL}/register`, { 
+    givenName, 
+    familyName, 
+    email, 
+    mobileNumber, 
+    password, 
+    state, 
+    postcode 
+  }, { withCredentials: true });
   return response.data;
 };
 
