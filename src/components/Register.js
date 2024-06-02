@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 
-// Australian states and their corresponding postcodes
 const states = {
   'NSW': 'New South Wales',
   'VIC': 'Victoria',
@@ -14,19 +13,16 @@ const states = {
   'NT': 'Northern Territory',
 };
 
-// Function to validate email format
 const validateEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 };
 
-// Function to validate mobile number format
 const validateMobileNumber = (number) => {
-  const re = /^\+61\d{9}$/; // Assuming Australian country code +61
+  const re = /^\+61\d{9}$/;
   return re.test(number);
 };
 
-// Function to validate postcode format (basic validation)
 const validatePostcode = (postcode) => {
   const re = /^\d{4}$/;
   return re.test(postcode);
@@ -40,23 +36,24 @@ function Register() {
   const [password, setPassword] = useState('');
   const [state, setState] = useState('');
   const [postcode, setPostcode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateEmail(email)) {
-      alert('Please enter a valid email address.');
+      setErrorMessage('Please enter a valid email address.');
       return;
     }
 
     if (!validateMobileNumber(mobileNumber)) {
-      alert('Please enter a valid mobile number with country code (+61).');
+      setErrorMessage('Please enter a valid mobile number with country code (+61).');
       return;
     }
 
     if (!validatePostcode(postcode)) {
-      alert('Please enter a valid postcode.');
+      setErrorMessage('Please enter a valid postcode.');
       return;
     }
 
@@ -64,12 +61,13 @@ function Register() {
       await authService.register(givenName, familyName, email, mobileNumber, password, state, postcode);
       navigate('/login');
     } catch (error) {
-      alert(error.response.data.message || 'Registration failed');
+      setErrorMessage(error.message || 'Registration failed');
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       <div>
         <label>Given Name</label>
         <input type="text" value={givenName} onChange={(e) => setGivenName(e.target.value)} required />
